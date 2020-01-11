@@ -1,18 +1,12 @@
 package schedule
 
-import (
-	"fmt"
-	"time"
-)
+import "time"
 
 const (
 	DEFAULT_TASK_CAPACITY = 100
 )
 
-type Task struct {
-	sleepTime int
-	message string
-}
+//
 
 type Scheduler struct {
 	tasks chan Task
@@ -24,28 +18,38 @@ func NewScheduler(capacity int) *Scheduler {
 	}
 }
 
-func (s *Scheduler) StartTaskReceiver() {
+//func (s *Scheduler) StartTaskReceiver() {
+//	go func() {
+//		for {
+//			s.ScheduleTask()
+//		}
+//	}()
+//}
+
+//func (s *Scheduler) ScheduleTask() {
+//	go func() {
+//		for {
+//			// TODO - распараллелить чтение из канала
+//			task := <- s.tasks
+//			timeout := time.Duration(task.sleepTime)
+//			select {
+//			case <- time.After(timeout * time.Second):
+//				fmt.Println(task.message)
+//			}
+//		}
+//	}()
+//}
+
+func (s *Scheduler) AddTask(timestamp time.Time, action func(task *Task)) {
+	if task, err := NewTask(timestamp, action); err == nil {
+		s.tasks <- *task
+	}
+}
+func (s *Scheduler) Run() {
 	go func() {
 		for {
-			s.ScheduleTask()
+			task := <-s.tasks
+			go task.Start()
 		}
 	}()
-}
-
-func (s *Scheduler) ScheduleTask() {
-	go func() {
-		for {
-			// TODO - распараллелить чтение из канала
-			task := <- s.tasks
-			timeout := time.Duration(task.sleepTime)
-			select {
-			case <- time.After(timeout * time.Second):
-				fmt.Println(task.message)
-			}
-		}
-	}()
-}
-
-func (s *Scheduler) AddTask(timeout int, message string) {
-	s.tasks <- Task{timeout, message}
 }
