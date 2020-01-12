@@ -9,14 +9,32 @@ import (
 func main() {
 	scheduler := schedule.NewScheduler(schedule.DEFAULT_TASK_CAPACITY)
 	scheduler.Run()
-	scheduler.AddTask(  time.Date(2020, 1, 11, 21, 52, 0, 0, time.UTC), func(task *schedule.Task) {
-		fmt.Println("hello!")
-		task.Done()
+
+	task := schedule.Single(time.Date(2020, 1, 12, 19, 37, 0, 0, time.UTC)).
+		SetAction(func(t *schedule.Task) {
+			fmt.Println("task #1")
+		})
+	periodicTask := schedule.EverySecond().
+		SetAction(func(task *schedule.Task) {
+			fmt.Println("periodic task")
+		}).
+		SetDelay(1, time.Second)
+	scheduler.AddTask(task)
+	scheduler.AddTask(periodicTask)
+	time.AfterFunc(10 * time.Second, func() {
+		periodicTask.Pause()
 	})
-	scheduler.AddTask(  time.Date(2020, 1, 11, 21, 52, 5, 0, time.UTC), func(task *schedule.Task) {
-		fmt.Println("hello!!!")
-		task.Done()
+	time.AfterFunc(15 * time.Second, func() {
+		periodicTask.Resume()
 	})
+	//scheduler.AddTask(  time.Date(2020, 1, 12, 18, 18, 0, 0, time.UTC), func(task *schedule.Task) {
+	//	fmt.Println("hello!")
+	//	task.Done()
+	//})
+	//scheduler.AddTask(  time.Date(2020, 1, 12, 18, 18, 10, 0, time.UTC), func(task *schedule.Task) {
+	//	fmt.Println("hello!!!")
+	//	task.Done()
+	//})
 	time.Sleep(time.Second * 100)
 	//scheduler.AddTask(1578775800, "after 5 secs")
 }
