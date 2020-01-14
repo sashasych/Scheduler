@@ -11,11 +11,11 @@ func main() {
 	scheduler.Run()
 
 	task := schedule.Single(time.Date(2020, 1, 12, 19, 37, 0, 0, time.UTC)).
-		SetAction(func(t *schedule.Task) {
+		SetAction(func(chan bool, chan bool) {
 			fmt.Println("task #1")
 		})
 	periodicTask := schedule.EverySecond().
-		SetAction(func(task *schedule.Task) {
+		SetAction(func(chan bool, chan bool) {
 			fmt.Println("periodic task")
 		}).
 		SetDelay(1, time.Second)
