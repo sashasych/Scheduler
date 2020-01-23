@@ -7,6 +7,7 @@ import (
 )
 
 type Task struct {
+	id       string                     // ID задачи
 	interval time.Duration              // Интервал выполнения периодичной задачи
 	delay    time.Duration              // Задержка перед первым выполнением задачи
 	action   func(chan bool, chan bool) // Канал паузы, канал остановки
@@ -46,6 +47,11 @@ func (t *Task) SetDelay(interval, unit time.Duration) *Task {
 
 func (t *Task) SetAction(action func(chan bool, chan bool)) *Task {
 	t.action = action
+	return t
+}
+
+func (t *Task) SetID(id string) *Task {
+	t.id = id
 	return t
 }
 
