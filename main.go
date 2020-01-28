@@ -1,13 +1,11 @@
 package main
 
 import (
-	"fmt"
-	"github.com/sashasych/scheduler/schedule"
 	"time"
 )
 
 func main() {
-	scheduler := schedule.NewScheduler(schedule.DEFAULT_TASK_CAPACITY)
+	/*scheduler := schedule.NewScheduler(schedule.DEFAULT_TASK_CAPACITY)
 	scheduler.Run()
 
 	task := schedule.Single(time.Date(2020, 1, 12, 19, 37, 0, 0, time.UTC)).
@@ -20,13 +18,13 @@ func main() {
 		}).
 		SetDelay(1, time.Second)
 	scheduler.AddTask(task)
-	scheduler.AddTask(periodicTask)
-	time.AfterFunc(10 * time.Second, func() {
+	scheduler.AddTask(periodicTask)*/
+	/*time.AfterFunc(10 * time.Second, func() {
 		periodicTask.Pause()
 	})
 	time.AfterFunc(15 * time.Second, func() {
 		periodicTask.Resume()
-	})
+	})*/
 	//scheduler.AddTask(  time.Date(2020, 1, 12, 18, 18, 0, 0, time.UTC), func(task *schedule.Task) {
 	//	fmt.Println("hello!")
 	//	task.Done()
