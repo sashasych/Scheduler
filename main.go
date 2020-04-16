@@ -2,31 +2,45 @@ package main
 
 import (
 	"fmt"
-	"github.com/sashasych/scheduler/schedule"
 	"time"
+
+	"github.com/scheduler/schedule"
 )
 
 func main() {
-	scheduler := schedule.NewScheduler(schedule.DEFAULT_TASK_CAPACITY)
+
+	// Инициализируем задачи(пустым массивом задач)
+	scheduler := schedule.NewScheduler(nil)
+	// Запускаем задачи
 	scheduler.Run()
 
-	task := schedule.Single(time.Date(2020, 1, 12, 19, 37, 0, 0, time.UTC)).
-		SetAction(func(chan bool, chan bool) {
+	//Создаем пару задач
+	var timeExecute time.Time
+	timeExecute = time.Date(2020, 4, 10, 13, 16, 0, 0, time.Local)
+
+	singleTask := schedule.Single(&timeExecute).
+		SetAction(func(chan struct{}, chan struct{}) {
 			fmt.Println("task #1")
-		})
-	periodicTask := schedule.EverySecond().
-		SetAction(func(chan bool, chan bool) {
+		}).SetID("1")
+	periodicTaskByDays := schedule.PeriodicByDays([]int{1, 2, 3, 4, 5, 6}, 14, 40, 0, 0, nil, nil, time.Now()).
+		SetAction(func(chan struct{}, chan struct{}) {
 			fmt.Println("periodic task")
-		}).
-		SetDelay(1, time.Second)
-	scheduler.AddTask(task)
-	scheduler.AddTask(periodicTask)
-	time.AfterFunc(10 * time.Second, func() {
-		periodicTask.Pause()
-	})
-	time.AfterFunc(15 * time.Second, func() {
-		periodicTask.Resume()
-	})
+		}).SetID("2")
+	periodicTaskByInterval := schedule.PeriodicByInterval(5, time.Second).SetDelay(10, time.Second).
+		SetAction(func(chan struct{}, chan struct{}) {
+			fmt.Println("task #1")
+		}).SetID("3")
+	//Добавляем задачи в сервис расписаний(scheduler)
+	scheduler.AddTask(singleTask)
+	scheduler.AddTask(periodicTaskByDays)
+	scheduler.AddTask(periodicTaskByInterval)
+
+	//time.AfterFunc(10*time.Second, func() {
+	//	periodicTask.Pause()
+	//})
+	//time.AfterFunc(15*time.Second, func() {
+	//	periodicTask.Resume()
+	//})
 	//scheduler.AddTask(  time.Date(2020, 1, 12, 18, 18, 0, 0, time.UTC), func(task *schedule.Task) {
 	//	fmt.Println("hello!")
 	//	task.Done()
