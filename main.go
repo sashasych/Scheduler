@@ -9,6 +9,8 @@ import (
 
 func main() {
 
+	// some test comment
+
 	// Инициализируем задачи(пустым массивом задач)
 	scheduler := schedule.NewScheduler(nil)
 	// Запускаем задачи
